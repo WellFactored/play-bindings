@@ -13,5 +13,6 @@ organization := "com.wellfactored"
 scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play" % PlayVersion.current % "provided"
+  "com.typesafe.play" %% "play" % PlayVersion.current % "provided",
+  "com.chuusai" %% "shapeless" % "2.2.5"
 )

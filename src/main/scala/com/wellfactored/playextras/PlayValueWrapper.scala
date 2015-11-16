@@ -3,19 +3,20 @@ package com.wellfactored.playextras
 
 import play.api.libs.json._
 import play.api.mvc.{PathBindable, QueryStringBindable}
+import shapeless._
 
 /**
- * This trait defines implicits for the common Play Framework transformations on values. Namely:
- * - A `Reads[W]` to read from json
- * - A `Writes[W]` to write to json
- * - A `PathBindable` to convert to and from strings in the url pattern
- * - A `QueryStringBindable` to convert to and from url query parameters
- *
- * To use this with, for instance, a case class that extends AnyVal, create a companion object
- * that extends this trait with V being the primitive type (e.g. String, Int) and W being the
- * wrapped type. Then make an implicit instance of `ValueWrapper[V,W]` within the companion
- * object, defining the appropriate wrap and unwrap methods.
- */
+  * This trait defines implicits for the common Play Framework transformations on values. Namely:
+  * - A `Reads[W]` to read from json
+  * - A `Writes[W]` to write to json
+  * - A `PathBindable` to convert to and from strings in the url pattern
+  * - A `QueryStringBindable` to convert to and from url query parameters
+  *
+  * To use this with, for instance, a case class that extends AnyVal, create a companion object
+  * that extends this trait with V being the primitive type (e.g. String, Int) and W being the
+  * wrapped type. Then make an implicit instance of `ValueWrapper[V,W]` within the companion
+  * object, defining the appropriate wrap and unwrap methods.
+  */
 trait PlayValueWrapper[V, W] {
   implicit def reads(implicit vr: Reads[V], w: ValueWrapper[V, W]): Reads[W] =
     PlayValueWrapper.reads[V, W]
@@ -30,10 +31,32 @@ trait PlayValueWrapper[V, W] {
     PlayValueWrapper.queryStringBindable[V, W]
 }
 
+trait SimpleWrapper[V, W] extends PlayValueWrapper[V, W] {
+  def apply(v: V): W
+
+  def unapply(w: W): Option[V]
+
+  implicit val wraps = new ValueWrapper[V, W] {
+    override def wrap(v: V): Either[String, W] = Right(apply(v))
+
+    override def unwrap(w: W): V = unapply(w).get
+  }
+}
+
+trait ShapelessWrapper[V, W] extends PlayValueWrapper[V, W] {
+  def generic: shapeless.Generic[W] {type Repr = shapeless.::[V, shapeless.HNil]}
+
+  implicit val wraps = new ValueWrapper[V, W] {
+    override def wrap(v: V): Either[String, W] = Right(generic.from(v :: HNil))
+
+    override def unwrap(w: W): V = generic.to(w).head
+  }
+}
+
 /**
- * Provide functions to create various Play type class instances for types
- * that implement a ValueWrapper
- */
+  * Provide functions to create various Play type class instances for types
+  * that implement a ValueWrapper
+  */
 object PlayValueWrapper {
   def writes[V: Writes, W](implicit vw: ValueWrapper[V, W]): Writes[W] =
     new Writes[W] {
