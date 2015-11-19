@@ -3,7 +3,36 @@ package com.wellfactored.playextras
 
 import play.api.libs.json._
 import play.api.mvc.{PathBindable, QueryStringBindable}
-import shapeless._
+
+
+/*
+* Mix this into the companion object of the case class and you will get all the implicit Play binding
+* functions. You can do validation on the value being wrapped by implementing the `validate` function.
+* If a value fails validation then Play will deal with the error message appropriately.
+ */
+trait ValidatingWrapper[V, W] extends PlayValueWrapper[V, W] {
+  def validate(v: V): Either[String, W]
+
+  // Will be supplied if you mix this into a case-class companion object
+  def unapply(w: W): Option[V]
+
+  implicit val wraps = new ValueWrapper[V, W] {
+    override def wrap(v: V): Either[String, W] = validate(v)
+
+    override def unwrap(w: W): V = unapply(w).get
+  }
+}
+
+/*
+* Mix this into the companion object of the case class and you will get all the implicit Play binding
+* functions. Use this where you do not need any validation on the value being wrapped.
+ */
+trait SimpleWrapper[V, W] extends ValidatingWrapper[V, W] {
+  // Will be supplied if you mix this into a case-class companion object
+  def apply(v: V): W
+
+  override def validate(v: V): Either[String, W] = Right(apply(v))
+}
 
 /**
   * This trait defines implicits for the common Play Framework transformations on values. Namely:
@@ -31,17 +60,6 @@ trait PlayValueWrapper[V, W] {
     PlayValueWrapper.queryStringBindable[V, W]
 }
 
-trait SimpleWrapper[V, W] extends PlayValueWrapper[V, W] {
-  def apply(v: V): W
-
-  def unapply(w: W): Option[V]
-
-  implicit val wraps = new ValueWrapper[V, W] {
-    override def wrap(v: V): Either[String, W] = Right(apply(v))
-
-    override def unwrap(w: W): V = unapply(w).get
-  }
-}
 
 /**
   * Provide functions to create various Play type class instances for types
