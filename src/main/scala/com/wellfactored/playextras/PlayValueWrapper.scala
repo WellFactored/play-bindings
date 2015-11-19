@@ -11,13 +11,16 @@ import play.api.mvc.{PathBindable, QueryStringBindable}
 * If a value fails validation then Play will deal with the error message appropriately.
  */
 trait ValidatingWrapper[V, W] extends PlayValueWrapper[V, W] {
-  def validate(v: V): Either[String, W]
+  def validate(v: V): Either[String, V]
 
   // Will be supplied if you mix this into a case-class companion object
   def unapply(w: W): Option[V]
 
+  // Will be supplied if you mix this into a case-class companion object
+  def apply(v: V): W
+
   implicit val wraps = new ValueWrapper[V, W] {
-    override def wrap(v: V): Either[String, W] = validate(v)
+    override def wrap(v: V): Either[String, W] = validate(v).right.map(apply)
 
     override def unwrap(w: W): V = unapply(w).get
   }
@@ -28,10 +31,7 @@ trait ValidatingWrapper[V, W] extends PlayValueWrapper[V, W] {
 * functions. Use this where you do not need any validation on the value being wrapped.
  */
 trait SimpleWrapper[V, W] extends ValidatingWrapper[V, W] {
-  // Will be supplied if you mix this into a case-class companion object
-  def apply(v: V): W
-
-  override def validate(v: V): Either[String, W] = Right(apply(v))
+  override def validate(v: V): Either[String, V] = Right(v)
 }
 
 /**

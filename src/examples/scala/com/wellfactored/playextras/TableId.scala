@@ -9,8 +9,7 @@ object TableId
 object Test {
   val i = TableId(5)
 
-  val pvw = PlayBindings[Long, TableId]
-
+  val pvw = PlayBindings[Long, TableId]()
   import pvw._
 
   Json.toJson(i)

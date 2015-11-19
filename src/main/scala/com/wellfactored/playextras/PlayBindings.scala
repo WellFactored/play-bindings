@@ -17,11 +17,14 @@ trait PlayBindings[V, W] {
 }
 
 object PlayBindings {
-  def apply[V, W](implicit gen: Generic.Aux[W, (V :: HNil)]): PlayBindings[V, W] = {
+
+  private def noValidate[V](v: V): Either[String, V] = Right(v)
+
+  def apply[V, W](validate: V => Either[String, V] = noValidate[V](_:V))(implicit gen: Generic.Aux[W, (V :: HNil)]): PlayBindings[V, W] = {
 
     new PlayBindings[V, W] {
       override implicit val wraps = new ValueWrapper[V, W] {
-        override def wrap(v: V): Either[String, W] = Right(gen.from(v :: HNil))
+        override def wrap(v: V): Either[String, W] = validate(v).right.map(v => gen.from(v :: HNil))
 
         override def unwrap(w: W): V = gen.to(w).head
       }
