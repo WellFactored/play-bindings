@@ -43,16 +43,6 @@ trait SimpleWrapper[V, W] extends PlayValueWrapper[V, W] {
   }
 }
 
-trait ShapelessWrapper[V, W] extends PlayValueWrapper[V, W] {
-  def generic: shapeless.Generic[W] {type Repr = shapeless.::[V, shapeless.HNil]}
-
-  implicit val wraps = new ValueWrapper[V, W] {
-    override def wrap(v: V): Either[String, W] = Right(generic.from(v :: HNil))
-
-    override def unwrap(w: W): V = generic.to(w).head
-  }
-}
-
 /**
   * Provide functions to create various Play type class instances for types
   * that implement a ValueWrapper
@@ -95,3 +85,4 @@ object PlayValueWrapper {
         vb.bind(key, params).map(_.right.flatMap(vw.wrap))
     }
 }
+
