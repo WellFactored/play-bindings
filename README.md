@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/WellFactored/play-bindings.svg?branch=master)](https://travis-ci.org/WellFactored/play-bindings)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/bbd834e020d74efabee786d768c2d609)](https://www.codacy.com/app/doug/play-bindings?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WellFactored/play-bindings&amp;utm_campaign=Badge_Grade)
+
 # play-bindings
  
 A value class is a case class, of type `W`, that wraps a single value, of type `V` and optionally 
