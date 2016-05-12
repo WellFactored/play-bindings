@@ -20,6 +20,8 @@ play-bindings will create implicit typeclass instances for the following:
 The value type, `V`, must itself already have typeclass instance in scope. Play provides instances
 of all four type classes for all the primitive types.
 
+## Creating the binding instances
+
 The library provides two mechanisms for creating the bindings. You can instantiate a new instance of
 the `PlayBindings` class and import its members into scope, like this:
 
@@ -46,4 +48,6 @@ In this case you can use a different trait, `ValidatingWrapper` like this:
 If validation fails then Play will nicely deal with passing the error message back out as part
 of its normal error handling mechanisms.
     
+## Dependencies
 
+`play-bindings` is built against Play 2.4.3. It should be forward compatible with Play 2.5
