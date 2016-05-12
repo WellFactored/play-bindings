@@ -1,18 +1,11 @@
 
-import play.core.PlayVersion
-
-resolvers := Seq(
-  Resolver.bintrayRepo("hmrc", "releases"),
-  "typesafe-releases" at "http://repo.typesafe.com/typesafe/releases/"
-)
-
-name := "play-extras"
+name := "play-bindings"
 
 organization := "com.wellfactored"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play" % PlayVersion.current % "provided",
+  "com.typesafe.play" %% "play" % "2.3.9" % "provided",
   "com.chuusai" %% "shapeless" % "2.2.5"
 )

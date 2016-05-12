@@ -1,4 +1,4 @@
-package com.wellfactored.playextras
+package com.wellfactored.playbindings
 
 /**
  * Defines an interface that can take a value of type V and wrap it in an

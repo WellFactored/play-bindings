@@ -1,5 +1,5 @@
 
-package com.wellfactored.playextras
+package com.wellfactored.playbindings
 
 import play.api.libs.json._
 import play.api.mvc.{PathBindable, QueryStringBindable}

@@ -1,8 +1,10 @@
-package com.wellfactored.playextras
+package com.wellfactored.playbindings
 
 import play.api.libs.json.{Reads, Writes}
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import shapeless.{::, Generic, HNil}
+
+import scala.annotation.implicitNotFound
 
 trait PlayBindings[V, W] {
   implicit def wraps: ValueWrapper[V, W]
@@ -20,7 +22,8 @@ object PlayBindings {
 
   private def noValidate[V](v: V): Either[String, V] = Right(v)
 
-  def apply[V, W](validate: V => Either[String, V] = noValidate[V](_:V))(implicit gen: Generic.Aux[W, (V :: HNil)]): PlayBindings[V, W] = {
+  @implicitNotFound(msg = "Cannot wrap a value of type ${V} with a class of type ${W}")
+  def apply[V, W](validate: V => Either[String, V] = noValidate[V](_: V))(implicit gen: Generic.Aux[W, (V :: HNil)]): PlayBindings[V, W] = {
 
     new PlayBindings[V, W] {
       override implicit val wraps = new ValueWrapper[V, W] {
