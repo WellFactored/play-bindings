@@ -7,7 +7,6 @@ import shapeless.{::, Generic, HNil}
 import scala.annotation.implicitNotFound
 
 trait PlayBindings[V, W] {
-  self =>
   implicit def wraps: ValueWrapper[V, W]
 
   implicit def reads(implicit vr: Reads[V]): Reads[W]
@@ -15,11 +14,7 @@ trait PlayBindings[V, W] {
   implicit def writes(implicit vw: Writes[V]): Writes[W]
 
   // Can't make this implicit or it will create ambiguity with the reads and writes
-  def formats(implicit r: Reads[W], w: Writes[W]) = new Format[W] {
-    override def reads(json: JsValue): JsResult[W] = r.reads(json)
-
-    override def writes(o: W): JsValue = w.writes(o)
-  }
+  def formats(implicit r: Reads[V], w: Writes[V]): Format[W]
 
   implicit def pathBindable(implicit pb: PathBindable[V]): PathBindable[W]
 
@@ -48,6 +43,13 @@ object PlayBindings {
 
       implicit def queryStringBinder(implicit qb: QueryStringBindable[V]): QueryStringBindable[W] =
         PlayValueWrapper.queryStringBindable[V, W]
+
+      // Can't make this implicit or it will create ambiguity with the reads and writes
+      override def formats(implicit r: Reads[V], w: Writes[V]): Format[W] = new Format[W] {
+        override def reads(json: JsValue): JsResult[W] = PlayValueWrapper.reads[V, W].reads(json)
+
+        override def writes(o: W): JsValue = PlayValueWrapper.writes[V, W].writes(o)
+      }
     }
   }
 }

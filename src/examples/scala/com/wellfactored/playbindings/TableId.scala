@@ -11,9 +11,10 @@ object UserId extends ValidatingWrapper[Long, UserId] {
 object Test {
   val i = UserId(5)
 
-  val pvw = PlayBindings[Long, UserId]()
+ // val pvw = PlayBindings[Long, UserId]()
 
-  import pvw._
+  implicit val f = PlayBindings[Long, UserId]().formats
+
 
   Json.toJson(i)
 
