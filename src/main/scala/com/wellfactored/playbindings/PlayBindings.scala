@@ -1,17 +1,25 @@
 package com.wellfactored.playbindings
 
-import play.api.libs.json.{Reads, Writes}
+import play.api.libs.json._
 import play.api.mvc.{PathBindable, QueryStringBindable}
 import shapeless.{::, Generic, HNil}
 
 import scala.annotation.implicitNotFound
 
 trait PlayBindings[V, W] {
+  self =>
   implicit def wraps: ValueWrapper[V, W]
 
   implicit def reads(implicit vr: Reads[V]): Reads[W]
 
   implicit def writes(implicit vw: Writes[V]): Writes[W]
+
+  // Can't make this implicit or it will create ambiguity with the reads and writes
+  def formats(implicit r: Reads[W], w: Writes[W]) = new Format[W] {
+    override def reads(json: JsValue): JsResult[W] = r.reads(json)
+
+    override def writes(o: W): JsValue = w.writes(o)
+  }
 
   implicit def pathBindable(implicit pb: PathBindable[V]): PathBindable[W]
 
