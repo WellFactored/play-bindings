@@ -54,4 +54,4 @@ of its normal error handling mechanisms.
     
 ## Dependencies
 
-`play-bindings` is built against Play 2.4.3. It should be forward compatible with Play 2.5
+`play-bindings` is built against Play 2.5.0. It should be forward compatible with Play 2.5

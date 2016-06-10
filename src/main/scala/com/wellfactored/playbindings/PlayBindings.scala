@@ -6,6 +6,8 @@ import shapeless.{::, Generic, HNil}
 
 import scala.annotation.implicitNotFound
 
+
+
 trait PlayBindings[V, W] {
   implicit def wraps: ValueWrapper[V, W]
 

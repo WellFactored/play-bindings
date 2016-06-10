@@ -1,22 +1,29 @@
 package com.wellfactored.playbindings
 
-import play.api.libs.json._
+import play.api.mvc.PathBindable
+import shapeless.{::, Generic, HNil, Lazy}
 
 case class UserId(id: Long) extends AnyVal
 
-object UserId extends ValidatingWrapper[Long, UserId] {
-  override def validate(v: Long): Either[String, Long] = if (v > 0) Right(v) else Left("id must be greater than zero")
-}
-
 object Test {
+
+
+  implicit def genericPathBindable[W, V](implicit gen: Lazy[Generic.Aux[W, V :: HNil]], bindable: PathBindable[V]): PathBindable[W] =
+    new PathBindable[W] {
+      override def unbind(key: String, wrapper: W): String =
+        bindable.unbind(key, gen.value.to(wrapper).head)
+
+      override def bind(key: String, value: String): Either[String, W] =
+        bindable.bind(key, value).right.map(v => gen.value.from(v :: HNil))
+    }
+
+  def pb(u: UserId)(implicit b: PathBindable[UserId]) = {
+    b.bind("userId", "5")
+    b.unbind("userId", i)
+  }
+
   val i = UserId(5)
 
- // val pvw = PlayBindings[Long, UserId]()
-
-  implicit val f = PlayBindings[Long, UserId]().formats
-
-
-  Json.toJson(i)
-
+  pb(i)
 }
 
