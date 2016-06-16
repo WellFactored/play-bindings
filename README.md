@@ -6,52 +6,74 @@
  
 A value class is a case class, of type `W`, that wraps a single value, of type `V` and optionally 
 extends `AnyVal`. Value classes are a really convenient and lightweight way of strongly typing 
-primitive values to avoid passing them to functions incorrectly, but the overhead of creating the
-json formatters and parameter binding typeclass instances can be a drag. This library provides a 
-convenient way to eliminate the boilerplate associated with those typeclasses. 
+primitive values to avoid passing them to functions incorrectly. However, when you want to convert
+to/from JSON then the default implementations that `Json.format[W]` provides will generate or
+ require an extra level of structure that is usually undesirable.
 
-An example, given:
+For example, given:
 
     case class PersonId(id: Long) extends AnyVal
+    case class Person(id:PersonId, name:String)
 
-play-bindings will create implicit typeclass instances for the following:
+then the default JSON would look like
+ ```
+    {
+        "id": {
+            "id": 1
+        },
+        "name": "Fred"
+    }
+```
+
+when we'd rather just have
+
+ ```
+    {
+        "id": 1,
+        "name": "Fred"
+    }
+```
+
+To do this you need to manually implement the JSON formatters that wrap and unwrap the structure. You
+need to implement similar boilerplate to be able to use the value classes in urls.
+This is a pain and adds significant friction to using value classes.
+
+The implicit functions provided by `play-bindings` will generate all of this boilerplate for you
+seamlessly. Given `PersonId` as defined above then extending the appropriate traits or importing
+the contents of the relevant objects will let the compiler automatically provide instances of
+the following type classes:
 
 * `Reads[PersonId]` - wraps a `Long` in a `PersonId` when reading from Json
 * `Writes[PersonId]` - unwraps the `Long` when writing to Json
 * `PathBindable[PersonId]` - decodes a `Long` from a url path segment into a `PersonId`
 * `QueryStringBindable` - takes a `Long` value from a query parameter and converts it to a `PersonId`
 
-The value type, `V`, must itself already have typeclass instance in scope. Play provides instances
+The value type, `V`, must itself already have a type class instance in scope. Play provides instances
 of all four type classes for all the primitive types.
 
 ## Creating the binding instances
 
-The library provides two mechanisms for creating the bindings. You can instantiate a new instance of
-the `PlayBindings` class and import its members into scope, like this:
+There are individual traits that contain implicit functions that will generate the relevant
+type classes:
 
-    import com.wellfactored.playbindings.PlayBindings
-    val pvw = PlayBindings[Long, PersonId]()
-    import pvw._
+* `trait ValueClassReads`
+* `trait ValueClassWrites`
+* `trait ValueClassPathBindable`
+* `trait ValueClassQueryStringBindable`
 
-Alternatively, you can mix a trait into the companion object of the value class, like this:
- 
-    import com.wellfactored.playbindings.SimpleWrapper
-    object PersonId extends SimpleWrapper[Long, PersonId]
-    
-The compiler will look in the companion object to find the typeclass instances if it can't
-find them in the implicit scope.
+There are also some traits and objects that combine the base traits in useful ways:
 
-Sometimes you may want to apply validation to the value before wrapping it in the value class instance.
-In this case you can use a different trait, `ValidatingWrapper` like this:
+* `trait ValueClassFormats extends ValueClassReads with ValueClassWrites`
+* `object ValueClassFormats extends ValueClassFormats`
+* `trait ValueClassUrlBinders extends ValueClassPathBindable with ValueClassQueryStringBindable`
+* `object ValueClassUrlBinders extends ValueClassUrlBinders`
 
-    import com.wellfactored.playbindings.ValidatingWrapper
-    object UserId extends ValidatingWrapper[Long, UserId] {
-      override def validate(v: Long): Either[String, Long] = if (v > 0) Right(v) else Left("id must be greater than zero")
-    }
+If you add the following to the `build.sbt` for your play project:
 
-If validation fails then Play will nicely deal with passing the error message back out as part
-of its normal error handling mechanisms.
-    
-## Dependencies
+`routesImport += "com.wellfactored.playbinders.ValueClassUrlBinders._"`
 
-`play-bindings` is built against Play 2.5.0. It should be forward compatible with Play 2.5
+then you can bind path elements and query parameters to value classes in your controller methods
+without writing any further boilerplate code.
+
+In the code where you are reading and writing JSON values you can either extend the relevant traits
+or use `import com.wellfactored.playbindings.ValueClassFormats._` as you prefer.

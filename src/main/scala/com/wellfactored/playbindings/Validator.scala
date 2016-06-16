@@ -1,4 +1,4 @@
-package com.wellfactored.playbinders
+package com.wellfactored.playbindings
 
 /**
   * Defines a validation of values of type `V` in the context of another type `W`, for example
@@ -11,7 +11,18 @@ package com.wellfactored.playbinders
   * @tparam V The type of the values that will be validated
   */
 trait Validator[W, V] {
-  def validate(a: V): Either[String, V]
+  /**
+    * Check that the value v is valid in the context of the type W. If it is then
+    * return a `Right[V]` containing the value. In addition to validation, this provides
+    * an opportunity to normalize the value in some way.
+    *
+    * If the value is not valid then return a `Left[String]` containing an error message.
+    *
+    * @param v The value to be validated and/or normalized
+    * @return `Right[V]` if `v` is valid, or `Left[String]` with an error message if `v`
+    *        is invalid
+    */
+  def validate(v: V): Either[String, V]
 }
 
 trait ValidatorLowPriorityImplicits {
