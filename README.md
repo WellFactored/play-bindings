@@ -1,3 +1,4 @@
+[![CircleCI](https://circleci.com/gh/WellFactored/play-bindings.svg?style=svg)](https://circleci.com/gh/WellFactored/play-bindings)
 [![Stories in Ready](https://badge.waffle.io/WellFactored/play-bindings.png?label=ready&title=Ready)](https://waffle.io/WellFactored/play-bindings)
 [![Build Status](https://travis-ci.org/WellFactored/play-bindings.svg?branch=master)](https://travis-ci.org/WellFactored/play-bindings)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/bbd834e020d74efabee786d768c2d609)](https://www.codacy.com/app/doug/play-bindings?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=WellFactored/play-bindings&amp;utm_campaign=Badge_Grade)
