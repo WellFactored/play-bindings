@@ -36,5 +36,12 @@ class ValueClassPathBindableTest extends FlatSpec with Matchers with EitherValue
     b.bind("", "UPPER").right.value shouldBe StringWrapper("upper")
   }
 
+  "unbind" should "extract the wrapped value and convert it to a String" in {
+    val b = implicitly[PathBindable[LongWrapper]]
+    val lw = LongWrapper(1337)
+
+    b.unbind("", lw) shouldBe "1337"
+  }
+
 
 }

@@ -36,5 +36,12 @@ class ValueClassQueryStringBindableTest extends FlatSpec with Matchers with Opti
     b.bind("a", Map("a" -> Seq("UPPER"))).value.right.value shouldBe StringWrapper("upper")
   }
 
+  "unbind" should "extract the wrapped value and convert it to a String" in {
+    val b: QueryStringBindable[LongWrapper] = implicitly[QueryStringBindable[LongWrapper]]
+    val lw = LongWrapper(1337)
+
+    b.unbind("key", lw) shouldBe "key=1337"
+  }
+
 
 }
