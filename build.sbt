@@ -5,8 +5,10 @@ organization := "com.wellfactored"
 
 scalaVersion := "2.11.8"
 
-enablePlugins(GitVersioning)
-enablePlugins(GitBranchPrompt)
+lazy val `play-bindings` =
+  (project in file("."))
+    .enablePlugins(GitVersioning)
+    .enablePlugins(GitBranchPrompt)
 
 git.useGitDescribe in ThisBuild := true
 
