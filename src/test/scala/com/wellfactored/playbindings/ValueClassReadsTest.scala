@@ -3,7 +3,7 @@ package com.wellfactored.playbindings
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
 import play.api.libs.json._
 
-class ValueClassReadsTest extends FlatSpec with Matchers with ValueClassReads {
+class ValueClassReadsTest extends FlatSpec with Matchers  with ValueClassReads {
 
   case class LongWrapper(l: Long)
 
