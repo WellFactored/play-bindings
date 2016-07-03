@@ -14,23 +14,23 @@ trait Validator[W, V] {
   /**
     * Check that the value v is valid in the context of the type W. If it is then
     * return a `Right[V]` containing the value. In addition to validation, this provides
-    * an opportunity to normalize the value in some way.
+    * an opportunity to normalize the incoming value in some way for the returned value.
     *
     * If the value is not valid then return a `Left[String]` containing an error message.
     *
     * @param v The value to be validated and/or normalized
     * @return `Right[V]` if `v` is valid, or `Left[String]` with an error message if `v`
-    *        is invalid
+    *         is invalid
     */
   def validate(v: V): Either[String, V]
 }
 
 trait ValidatorLowPriorityImplicits {
   /**
-    * Define a low-priority instance that allows any value of type `V`. When using the PlayBinders
+    * Define a low-priority instance that allows any value of type `V`. When using ValueWrapper
     * this instance will get picked up unless you define your own implicit instance to override it.
     */
-  implicit def validator[W, V]: Validator[W, V] = new Validator[W, V] {
+  implicit def identityValidator[W, V]: Validator[W, V] = new Validator[W, V] {
     override def validate(a: V): Either[String, V] = Right(a)
   }
 }

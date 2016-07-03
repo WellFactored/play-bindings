@@ -3,8 +3,16 @@ package com.wellfactored.playbindings
 import shapeless.{::, Generic, HNil, Lazy}
 
 trait ValueWrapper[W, V] {
+  /**
+    * Attempt to wrap the value `v` in an instance of type 'W' and return it as a `Right`.
+    * If `v` is somehow inappropriate to be wrapped then return an error message in
+    * a `Left`
+    */
   def wrap(v: V): Either[String, W]
 
+  /**
+    * Extract and return the value of type `V` from the instance of `W`
+    */
   def unwrap(w: W): V
 }
 
