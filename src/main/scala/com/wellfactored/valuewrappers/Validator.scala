@@ -1,4 +1,7 @@
-package com.wellfactored.playbindings
+package com.wellfactored.valuewrappers
+
+import cats.data.Validated
+import cats.syntax.validated._
 
 /**
   * Defines a validation of values of type `V` in the context of another type `W`, for example
@@ -22,7 +25,7 @@ trait Validator[W, V] {
     * @return `Right[V]` if `v` is valid, or `Left[String]` with an error message if `v`
     *         is invalid
     */
-  def validate(v: V): Either[String, V]
+  def validate(v: V): Validated[String, V]
 }
 
 trait ValidatorLowPriorityImplicits {
@@ -31,7 +34,7 @@ trait ValidatorLowPriorityImplicits {
     * this instance will get picked up unless you define your own implicit instance to override it.
     */
   implicit def identityValidator[W, V]: Validator[W, V] = new Validator[W, V] {
-    override def validate(a: V): Either[String, V] = Right(a)
+    override def validate(a: V): Validated[String, V] = a.valid
   }
 }
 

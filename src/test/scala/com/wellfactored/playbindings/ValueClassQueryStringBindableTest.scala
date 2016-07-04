@@ -3,9 +3,13 @@ package com.wellfactored.playbindings
 import org.scalatest.{EitherValues, FlatSpec, Matchers, OptionValues}
 import play.api.mvc.QueryStringBindable
 
-class ValueClassQueryStringBindableTest extends FlatSpec with Matchers with OptionValues with EitherValues with ValueClassQueryStringBindable {
-
-  case class LongWrapper(l: Long)
+class ValueClassQueryStringBindableTest
+  extends FlatSpec
+    with Matchers
+    with OptionValues
+    with EitherValues
+    with ValueClassQueryStringBindable
+    with TestValidators {
 
   val goodLongValue = Map("a" -> Seq("1"))
   val badLongValue = Map("a" -> Seq("-1"))
@@ -17,23 +21,15 @@ class ValueClassQueryStringBindableTest extends FlatSpec with Matchers with Opti
   }
 
   it should "use a Validator if one is defined implicitly" in {
-    implicit val vl = new Validator[LongWrapper, Long] {
-      override def validate(l: Long): Either[String, Long] = if (l >= 0) Right(l) else Left(s"Id must be a non-negative integer ($l)")
-    }
-
+    implicit val vl = nonNegativeLong
     val b = implicitly[QueryStringBindable[LongWrapper]]
 
     b.bind("a", goodLongValue).value.right.value shouldBe LongWrapper(1)
     b.bind("a", badLongValue).value.left.value shouldBe a[String]
   }
 
-  case class StringWrapper(s: String)
-
   it should "use the normalised value returned from the validator" in {
-    implicit val vl = new Validator[StringWrapper, String] {
-      override def validate(s: String): Either[String, String] = Right(s.toLowerCase)
-    }
-
+    implicit val vl = normaliseToLowerCase
     val b = implicitly[QueryStringBindable[StringWrapper]]
 
     b.bind("a", Map("a" -> Seq("UPPER"))).value.right.value shouldBe StringWrapper("upper")
