@@ -14,15 +14,15 @@ pomIncludeRepository in ThisBuild := { _ => false }
 
 licenses in ThisBuild := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
 
-homepage in ThisBuild := Some(url("https://github.com/wellfactored/play-bindings"))
+homepage in ThisBuild := Some(url(s"https://github.com/wellfactored/$name"))
 
-scmInfo in ThisBuild := Some(ScmInfo(url("http://github.com/wellfactored/play-bindings"), "scm:git@github.com:wellfactored/play-bindings.git"))
+scmInfo in ThisBuild := Some(ScmInfo(url(s"http://github.com/wellfactored/$name"), s"scm:git@github.com:wellfactored/$name.git"))
 
-pomExtra in ThisBuild := (
+pomExtra in ThisBuild :=
   <developers>
     <developer>
       <id>dclinton</id>
       <name>Doug Clinton</name>
     </developer>
   </developers>
-  )
+
