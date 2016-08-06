@@ -1,6 +1,6 @@
 package com.wellfactored.playbindings
 
-import com.wellfactored.valuewrappers.{ValueWrapper, ValueWrapperGen}
+import com.wellfactored.valuewrapper.{ValueWrapper, ValueWrapperGen}
 import play.api.mvc.{PathBindable, QueryStringBindable}
 
 trait ValueClassPathBindable extends ValueWrapperGen {

@@ -2,7 +2,7 @@ package com.wellfactored.playbindings
 
 import cats.data.Validated
 import cats.syntax.validated._
-import com.wellfactored.valuewrappers.Validator
+import com.wellfactored.valuewrapper.Validator
 
 trait TestValidators {
 

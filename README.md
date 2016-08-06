@@ -40,10 +40,10 @@ To do this you need to manually implement the JSON formatters that wrap and unwr
 need to implement similar boilerplate to be able to use the value classes in urls.
 This is a pain and adds significant friction to using value classes.
 
-The implicit functions provided by `play-bindings` will generate all of this boilerplate for you
-seamlessly. Given `PersonId` as defined above then extending the appropriate traits or importing
-the contents of the relevant objects will let the compiler automatically provide instances of
-the following type classes:
+`play-bindings` make use of the [`value-wrapper`](https://github.com/WellFactored/value-wrapper) library 
+to generate all of this boilerplate for you seamlessly. Given `PersonId` as defined above then extending 
+the appropriate traits or importing the contents of the relevant objects will let the compiler automatically 
+provide instances of the following type classes:
 
 * `Reads[PersonId]` - wraps a `Long` in a `PersonId` when reading from Json
 * `Writes[PersonId]` - unwraps the `Long` when writing to Json
@@ -82,7 +82,7 @@ or use `import com.wellfactored.playbindings.ValueClassFormats._` as you prefer.
 
 ## Validation and Normalisation of values
 
-Sometimes you want to validate the value before allowing the value class to be created. `play-bindings`
+Sometimes you want to validate the value before allowing the value class to be created. `value-wrapper`
 provides a type class called `Validator[W, V]` that will let you do this. For example, we might want to ensure
 that the `Long` being used to construct a `UserId` must be non-negative. We could provide an instance of
 `Validator[W, V]` that looks like this:

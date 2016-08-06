@@ -1,7 +1,7 @@
 package com.wellfactored.playbindings
 
 import cats.data.Validated.{Invalid, Valid}
-import com.wellfactored.valuewrappers.{ValueWrapper, ValueWrapperGen}
+import com.wellfactored.valuewrapper.{ValueWrapper, ValueWrapperGen}
 import play.api.libs.json._
 
 trait ValueClassReads extends ValueWrapperGen {
