@@ -1,6 +1,5 @@
 package com.wellfactored.playbindings
 
-import cats.data.Validated.{Invalid, Valid}
 import com.wellfactored.valuewrapper.{ValueWrapper, ValueWrapperGen}
 import play.api.libs.json._
 
