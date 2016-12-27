@@ -20,21 +20,6 @@ class ValueClassQueryStringBindableTest
     b.bind("a", goodLongValue).value.right.value shouldBe LongWrapper(1)
   }
 
-  it should "use a Validator if one is defined implicitly" in {
-    implicit val vl = nonNegativeLong
-    val b = implicitly[QueryStringBindable[LongWrapper]]
-
-    b.bind("a", goodLongValue).value.right.value shouldBe LongWrapper(1)
-    b.bind("a", badLongValue).value.left.value shouldBe a[String]
-  }
-
-  it should "use the normalised value returned from the validator" in {
-    implicit val vl = normaliseToLowerCase
-    val b = implicitly[QueryStringBindable[StringWrapper]]
-
-    b.bind("a", Map("a" -> Seq("UPPER"))).value.right.value shouldBe StringWrapper("upper")
-  }
-
   "unbind" should "extract the wrapped value and convert it to a String" in {
     val b: QueryStringBindable[LongWrapper] = implicitly[QueryStringBindable[LongWrapper]]
     val lw = LongWrapper(1337)
