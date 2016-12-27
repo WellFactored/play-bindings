@@ -3,8 +3,6 @@ name := "play-bindings"
 
 organization := "com.wellfactored"
 
-crossScalaVersions := Seq("2.10.6", "2.11.8")
-
 scalaVersion := "2.11.8"
 
 lazy val `play-bindings` =
@@ -15,9 +13,8 @@ lazy val `play-bindings` =
 git.useGitDescribe in ThisBuild := true
 
 libraryDependencies ++= Seq(
-  "com.wellfactored" %% "value-wrapper" % "1.2.0",
-  "com.typesafe.play" %% "play" % "2.3.9" % Provided,
-  compilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full),
+  "com.chuusai" %% "shapeless" % "2.3.2",
+  "com.typesafe.play" %% "play" % "2.5.9" % Provided,
 
   "org.scalatest" %% "scalatest" % "3.0.0" % Test
 )
