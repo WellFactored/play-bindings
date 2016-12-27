@@ -23,21 +23,19 @@ import shapeless.Generic
 trait ValueClassReads extends GenericValueWrapper {
   implicit def genericReads[W, V](implicit
                                   gen: Generic.Aux[W, V],
-                                  rv: Reads[V]): Reads[W] =
-    new Reads[W] {
-      override def reads(json: JsValue): JsResult[W] = rv.reads(json).map { v =>
-        gen.from(v)
-      }
+                                  rv: Reads[V]): Reads[W] = new Reads[W] {
+    override def reads(json: JsValue): JsResult[W] = rv.reads(json).map { v =>
+      gen.from(v)
     }
+  }
 }
 
 trait ValueClassWrites extends GenericValueWrapper {
   implicit def genericWrites[W, V](implicit
                                    gen: Generic.Aux[W, V],
-                                   wv: Writes[V]): Writes[W] =
-    new Writes[W] {
-      override def writes(w: W): JsValue = wv.writes(gen.to(w))
-    }
+                                   wv: Writes[V]): Writes[W] = new Writes[W] {
+    override def writes(w: W): JsValue = wv.writes(gen.to(w))
+  }
 }
 
 trait ValueClassFormats extends ValueClassReads with ValueClassWrites

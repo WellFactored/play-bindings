@@ -51,7 +51,7 @@ To do this you need to manually implement the JSON formatters that wrap and unwr
 need to implement similar boilerplate to be able to use the value classes in urls.
 This is a pain and adds significant friction to using value classes.
 
-`play-bindings` make use of the [`value-wrapper`](https://github.com/WellFactored/value-wrapper) library 
+`play-bindings` uses a little bit of Shapeless (https://github.com/milessabin/shapeless) 
 to generate all of this boilerplate for you seamlessly. Given `PersonId` as defined above then extending 
 the appropriate traits or importing the contents of the relevant objects will let the compiler automatically 
 provide instances of the following type classes:
@@ -61,7 +61,7 @@ provide instances of the following type classes:
 * `PathBindable[PersonId]` - decodes a `Long` from a url path segment into a `PersonId`
 * `QueryStringBindable` - takes a `Long` value from a query parameter and converts it to a `PersonId`
 
-The value type, `V`, must itself already have a type class instance in scope. Play provides instances
+The value type, `V`, must itself already have a type class instance in scope, e.g. `Reads[String]`. Play provides instances
 of all four type classes for all the primitive types.
 
 ## Creating the binding instances
@@ -83,7 +83,7 @@ There are also some traits and objects that combine the base traits in useful wa
 
 If you add the following to the `build.sbt` for your play project:
 
-    routesImport += "com.wellfactored.playbinders.ValueClassUrlBinders._"
+    routesImport += "com.wellfactored.playbindings.ValueClassUrlBinders._"
 
 then you can bind path elements and query parameters to value classes in your controller methods
 without writing any further boilerplate code.

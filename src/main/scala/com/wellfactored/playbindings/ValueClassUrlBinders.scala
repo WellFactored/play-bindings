@@ -53,6 +53,6 @@ trait ValueClassUrlBinders extends ValueClassPathBindable with ValueClassQuerySt
   * generators in implicit scope. In particular, add this to your `build.sbt` to import them into
   * the routes file:
   *
-  * `routesImport += "com.wellfactored.playbinders.ValueClassUrlBinders._"`
+  * `routesImport += "com.wellfactored.playbindings.ValueClassUrlBinders._"`
   */
 object ValueClassUrlBinders extends ValueClassUrlBinders
