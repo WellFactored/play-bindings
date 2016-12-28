@@ -1,6 +1,23 @@
+/*
+ * Copyright (C) 2016  Well-Factored Software Ltd.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.wellfactored.playbindings
 
-import shapeless.{::, Generic, HList, HNil}
+import shapeless.{::, Generic, HNil, Lazy}
 
 /**
   * This trait provides an implicit function that will generate a ValueWrapper[W,V]
@@ -8,40 +25,8 @@ import shapeless.{::, Generic, HList, HNil}
   * Shapeless to summon a `Generic[W, V :: HNil]` to assist with the wrapping
   * and unwrapping, so it will actually work with any type `W` that is record-like
   * enough for Shapeless to handle.
-  *
-  * The `genWV` function also takes an implicit `Validator[W,V]` that allows for
-  * some form of validation and manipulation of the value to be wrapped when
-  * constructing the `W` instance.
-  *
   */
 trait ValueWrapperGen {
-  /**
-    *
-    * @param gen provides the Generic mapping between the wrapper type and the wrapped
-    *            value type.
-    * @param ev1 provided evidence that the `Repr` in then `Generic` instance is an `HList`
-    *            with one element of type `V`
-    * @param ev2 Provides the reverse equivalence evidence between `Repr` and `V :: HNil`.
-    *            `ev1` allows us to convert from `V` to `W` using `gen.from`, but we need `ev2`
-    *            in order to be able to use `gen.to` to convert the other way, because `=:=` only
-    *            proves type equivalence to the compiler in one direction.
-    *            See http://typelevel.org/blog/2014/07/02/type_equality_to_leibniz.html
-    */
-  implicit def genGen[W, V, Repr <: HList](
-                                            implicit
-                                            gen: Generic.Aux[W, Repr],
-                                            ev1: (V :: HNil) =:= Repr,
-                                            ev2: Repr =:= (V :: HNil)
-                                          ): Generic.Aux[W, V] = {
-    new Generic[W] {
-      override type Repr = V
-
-      override def to(w: W) = gen.to(w).head
-
-      override def from(v: V) = gen.from(v :: HNil)
-    }
-  }
-
   /**
     *
     * @param gen provides the Generic mapping between the wrapper type and the wrapped
@@ -49,12 +34,12 @@ trait ValueWrapperGen {
     */
   implicit def genWV[W, V](
                             implicit
-                            gen: Generic.Aux[W, V]
+                            gen: Lazy[Generic.Aux[W, V :: HNil]]
                           ): ValueWrapper[W, V] =
     new ValueWrapper[W, V] {
-      override def wrap(v: V): W = gen.from(v)
+      override def wrap(v: V): W = gen.value.from(v :: HNil)
 
-      override def unwrap(w: W): V = gen.to(w)
+      override def unwrap(w: W): V = gen.value.to(w).head
     }
 }
 

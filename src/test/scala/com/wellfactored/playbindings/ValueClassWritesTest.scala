@@ -43,6 +43,8 @@ class ValueClassWritesTest extends WordSpecLike with Matchers with ValueClassWri
       import testClasses.Foo
 
       implicit val fWrites = Json.writes[Foo]
+
+      fWrites.writes(Foo(LongWrapper(1337), "leet")) shouldBe Json.parse("""{ "l" : 1337, "s" : "leet" }""")
     }
   }
 }
