@@ -17,23 +17,34 @@
 
 package com.wellfactored.playbindings
 
-import org.scalatest.{FlatSpec, Matchers}
-import play.api.libs.json.{JsNumber, Writes}
+import org.scalatest.{Matchers, WordSpecLike}
+import play.api.libs.json.{JsNumber, Json, Writes}
 
 object testClasses {
 
   case class LongWrapper(l: Long) extends AnyVal
 
+  case class Foo(l: LongWrapper, s: String)
+
 }
 
-class ValueClassWritesTest extends FlatSpec with Matchers with ValueClassWrites {
+class ValueClassWritesTest extends WordSpecLike with Matchers with ValueClassWrites {
 
   import testClasses.LongWrapper
 
-  "writes" should "implicitly summon a Writes for LongWrapper" in {
-    val w = implicitly[Writes[LongWrapper]]
+  "writes" should {
+    "implicitly summon a Writes for LongWrapper" in {
+      val w = implicitly[Writes[LongWrapper]]
 
-    w.writes(LongWrapper(1337)) shouldBe JsNumber(1337)
+      w.writes(LongWrapper(1337)) shouldBe JsNumber(1337)
+    }
+
+    "implicitly summon a Writes for LongWrapper when constructing a Writes for a case class" in {
+      import testClasses.Foo
+
+      implicit val fWrites = Json.writes[Foo]
+
+      fWrites.writes(Foo(LongWrapper(1337), "leet")) shouldBe Json.parse("""{ "l" : 1337, "s" : "leet" }""")
+    }
   }
-
 }

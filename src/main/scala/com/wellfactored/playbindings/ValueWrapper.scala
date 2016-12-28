@@ -17,13 +17,24 @@
 
 package com.wellfactored.playbindings
 
-import org.scalatest.{FlatSpec, Matchers}
-import play.api.libs.json._
+/**
+  * `ValueWrapper` is a type class that abstracts the creation of a class that
+  * wraps a single value of another type, as well as the action of extracting
+  * the wrapped value from the wrapper. For example, for a single-member case class
+  * the `wrap` method would use the companion object `apply` method to construct
+  * an instance and the accessor for the member to extract the wrapped value.
+  *
+  * @tparam W the type of the wrapper
+  * @tparam V the type of the wrapped value
+  */
+trait ValueWrapper[W, V] {
+  /**
+    * Wrap the value `v` in an instance of type 'W'
+    */
+  def wrap(v: V): W
 
-class ValueClassReadsTest extends FlatSpec with Matchers with ValueClassReads with TestWrappers {
-  "reads" should "implicitly summon a Reads for LongWrapper" in {
-    val r = implicitly[Reads[LongWrapper]]
-
-    r.reads(JsNumber(1)) shouldBe JsSuccess(LongWrapper(1))
-  }
+  /**
+    * Extract and return the value of type `V` from the instance of `W`
+    */
+  def unwrap(w: W): V
 }

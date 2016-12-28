@@ -18,23 +18,20 @@
 package com.wellfactored.playbindings
 
 import play.api.libs.json._
-import shapeless.Generic
 
-trait ValueClassReads extends GenericValueWrapper {
+trait ValueClassReads extends ValueWrapperGen {
   implicit def genericReads[W, V](implicit
-                                  gen: Generic.Aux[W, V],
+                                  vw: ValueWrapper[W, V],
                                   rv: Reads[V]): Reads[W] = new Reads[W] {
-    override def reads(json: JsValue): JsResult[W] = rv.reads(json).map { v =>
-      gen.from(v)
-    }
+    override def reads(json: JsValue): JsResult[W] = rv.reads(json).map(vw.wrap)
   }
 }
 
-trait ValueClassWrites extends GenericValueWrapper {
+trait ValueClassWrites extends ValueWrapperGen {
   implicit def genericWrites[W, V](implicit
-                                   gen: Generic.Aux[W, V],
+                                   vw: ValueWrapper[W, V],
                                    wv: Writes[V]): Writes[W] = new Writes[W] {
-    override def writes(w: W): JsValue = wv.writes(gen.to(w))
+    override def writes(w: W): JsValue = wv.writes(vw.unwrap(w))
   }
 }
 

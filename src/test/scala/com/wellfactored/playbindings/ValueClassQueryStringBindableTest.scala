@@ -26,7 +26,7 @@ class ValueClassQueryStringBindableTest
     with OptionValues
     with EitherValues
     with ValueClassQueryStringBindable
-    with TestValidators {
+    with TestWrappers {
 
   val goodLongValue = Map("a" -> Seq("1"))
   val badLongValue = Map("a" -> Seq("-1"))

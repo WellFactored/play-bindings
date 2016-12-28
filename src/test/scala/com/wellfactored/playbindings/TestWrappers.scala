@@ -17,7 +17,7 @@
 
 package com.wellfactored.playbindings
 
-trait TestValidators {
+trait TestWrappers {
   case class StringWrapper(s: String)
 
   case class LongWrapper(l: Long)
