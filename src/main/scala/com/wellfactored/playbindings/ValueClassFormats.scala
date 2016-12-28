@@ -17,19 +17,13 @@
 
 package com.wellfactored.playbindings
 
-import com.wellfactored.valuewrapper.{ValueWrapper, ValueWrapperGen}
 import play.api.libs.json._
 
 trait ValueClassReads extends ValueWrapperGen {
   implicit def genericReads[W, V](implicit
                                   vw: ValueWrapper[W, V],
                                   rv: Reads[V]): Reads[W] = new Reads[W] {
-    override def reads(json: JsValue): JsResult[W] = rv.reads(json).flatMap { v =>
-      vw.wrap(v) match {
-        case Left(e) => JsError(e)
-        case Right(w) => JsSuccess(w)
-      }
-    }
+    override def reads(json: JsValue): JsResult[W] = rv.reads(json).map(vw.wrap)
   }
 }
 

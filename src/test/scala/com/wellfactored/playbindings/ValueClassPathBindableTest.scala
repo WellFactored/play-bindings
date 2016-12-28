@@ -25,7 +25,7 @@ class ValueClassPathBindableTest
     with Matchers
     with EitherValues
     with ValueClassPathBindable
-    with TestValidators {
+    with TestWrappers {
 
   "bind" should "implicitly summon a binder for Test" in {
     val b = implicitly[PathBindable[LongWrapper]]

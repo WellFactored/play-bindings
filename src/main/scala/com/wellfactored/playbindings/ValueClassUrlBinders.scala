@@ -17,7 +17,6 @@
 
 package com.wellfactored.playbindings
 
-import com.wellfactored.valuewrapper.{ValueWrapper, ValueWrapperGen}
 import play.api.mvc.{PathBindable, QueryStringBindable}
 
 trait ValueClassPathBindable extends ValueWrapperGen {
@@ -28,10 +27,7 @@ trait ValueClassPathBindable extends ValueWrapperGen {
         binder.unbind(key, vw.unwrap(wrapper))
 
       override def bind(key: String, value: String): Either[String, W] =
-        for {
-          v1 <- binder.bind(key, value).right
-          v2 <- vw.wrap(v1).right
-        } yield v2
+        binder.bind(key, value).right.map(vw.wrap)
     }
 }
 
@@ -43,7 +39,7 @@ trait ValueClassQueryStringBindable extends ValueWrapperGen {
         binder.unbind(key, vw.unwrap(wrapper))
 
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, W]] = {
-        binder.bind(key, params).map(_.right.flatMap(vw.wrap))
+        binder.bind(key, params).map(_.right.map(vw.wrap))
       }
     }
 }

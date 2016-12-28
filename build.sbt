@@ -13,7 +13,7 @@ lazy val `play-bindings` =
 git.useGitDescribe in ThisBuild := true
 
 libraryDependencies ++= Seq(
-  "com.wellfactored" %% "value-wrapper" % "1.2.2",
+  "com.chuusai" %% "shapeless" % "2.3.2",
   "com.typesafe.play" %% "play" % "2.5.9" % Provided,
 
   "org.scalatest" %% "scalatest" % "3.0.0" % Test
