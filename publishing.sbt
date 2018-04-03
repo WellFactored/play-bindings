@@ -1,8 +1,8 @@
 publishMavenStyle in ThisBuild := true
 
-useGpg := true
-
-usePgpKeyHex("46C41F3C")
+// There seems to be a problem with this setting. Without it `publishSigned` will work, but get
+// an exception about not being able to find the key if I use it.
+//usePgpKeyHex("46C41F3C")
 
 publishTo := sonatypePublishTo.value
 
