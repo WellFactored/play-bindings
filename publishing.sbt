@@ -2,7 +2,10 @@ publishMavenStyle in ThisBuild := true
 
 // There seems to be a problem with this setting. Without it `publishSigned` will work, but get
 // an exception about not being able to find the key if I use it.
-//usePgpKeyHex("46C41F3C")
+//pgpSigningKey := Some(0x2F18A34746C41F3CL)
+
+pgpPublicRing := file("/Users/dec/.sonatype/pubring.gpg")
+pgpSecretRing := file("/Users/dec/.sonatype/secring.gpg")
 
 publishTo := sonatypePublishTo.value
 
