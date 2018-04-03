@@ -34,7 +34,7 @@ jobs:
 
       - run: sbt coverage +test:test
 
-      - run: sbt +coverageReport codacyCoverage
+      - run: sbt +coverageReport #codacyCoverage
       - run: mkdir -p $CIRCLE_TEST_REPORTS/junit/
       - run: find . -type f -regex ".*/target/test-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
 
