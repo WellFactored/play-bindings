@@ -19,19 +19,19 @@ package com.wellfactored.playbindings
 import play.api.libs.json._
 
 trait ValueClassReads extends ValueWrapperGen {
-  implicit def genericReads[W, V](
-    implicit
-    vw: ValueWrapper[W, V],
-    rv: Reads[V]
-  ): Reads[W] = (json: JsValue) => rv.reads(json).map(vw.wrap)
+  implicit def genericReads[W, V](implicit
+                                  vw: ValueWrapper[W, V],
+                                  rv: Reads[V]): Reads[W] = new Reads[W] {
+    override def reads(json: JsValue): JsResult[W] = rv.reads(json).map(vw.wrap)
+  }
 }
 
 trait ValueClassWrites extends ValueWrapperGen {
-  implicit def genericWrites[W, V](
-    implicit
-    vw: ValueWrapper[W, V],
-    wv: Writes[V]
-  ): Writes[W] = (w: W) => wv.writes(vw.unwrap(w))
+  implicit def genericWrites[W, V](implicit
+                                   vw: ValueWrapper[W, V],
+                                   wv: Writes[V]): Writes[W] = new Writes[W] {
+    override def writes(w: W): JsValue = wv.writes(vw.unwrap(w))
+  }
 }
 
 trait ValueClassFormats extends ValueClassReads with ValueClassWrites
