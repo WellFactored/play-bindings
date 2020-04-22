@@ -8,6 +8,7 @@ pgpPublicRing := file("/Users/dec/.sonatype/pubring.gpg")
 pgpSecretRing := file("/Users/dec/.sonatype/secring.gpg")
 
 publishTo := sonatypePublishTo.value
+publishConfiguration := publishConfiguration.value.withOverwrite(true)
 
 pomIncludeRepository in ThisBuild := { _ => false }
 
